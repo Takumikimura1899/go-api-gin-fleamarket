@@ -12,10 +12,10 @@ type IItemController interface {
 }
 
 type ItemController struct {
-	service services.ItemService
+	service services.IItemService
 }
 
-func NewItemController(service services.ItemService) IItemController {
+func NewItemController(service services.IItemService) IItemController {
 	return &ItemController{service: service}
 }
 
