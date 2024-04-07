@@ -3,6 +3,8 @@ package repositories
 import (
 	"errors"
 	"gin-fleamarket/models"
+
+	"gorm.io/gorm"
 )
 
 // 解説ではFindAllのreturnが*[]models.Itemになっているが、スライスは参照型なのでポインタを使う必要はある？
@@ -62,4 +64,40 @@ func (r *ItemMemoryRepository) Delete(itemId uint) error {
 		}
 	}
 	return errors.New("item not found")
+}
+
+type ItemRepository struct {
+	db *gorm.DB
+}
+
+func NewItemRepository(db *gorm.DB) IItemRepository {
+	return &ItemRepository{db: db}
+}
+
+func (r *ItemRepository) Create(newItem models.Item) (*models.Item, error) {
+	result := r.db.Create(&newItem)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &newItem, nil
+}
+
+// Delete implements IItemRepository.
+func (*ItemRepository) Delete(itemId uint) error {
+	panic("unimplemented")
+}
+
+// FindAll implements IItemRepository.
+func (*ItemRepository) FindAll() (*[]models.Item, error) {
+	panic("unimplemented")
+}
+
+// FindById implements IItemRepository.
+func (*ItemRepository) FindById(itemId uint) (*models.Item, error) {
+	panic("unimplemented")
+}
+
+// Update implements IItemRepository.
+func (*ItemRepository) Update(updatedItem models.Item) (*models.Item, error) {
+	panic("unimplemented")
 }
