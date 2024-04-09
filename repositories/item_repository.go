@@ -82,11 +82,6 @@ func (r *ItemRepository) Create(newItem models.Item) (*models.Item, error) {
 	return &newItem, nil
 }
 
-// Delete implements IItemRepository.
-func (*ItemRepository) Delete(itemId uint) error {
-	panic("unimplemented")
-}
-
 func (r *ItemRepository) FindAll() (*[]models.Item, error) {
 	var items []models.Item
 	result := r.db.Find(&items)
@@ -114,4 +109,16 @@ func (r *ItemRepository) Update(updatedItem models.Item) (*models.Item, error) {
 		return nil, result.Error
 	}
 	return &updatedItem, nil
+}
+
+func (r *ItemRepository) Delete(itemId uint) error {
+	deleteItem, err := r.FindById(itemId)
+	if err != nil {
+		return err
+	}
+	result := r.db.Delete(&deleteItem)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
