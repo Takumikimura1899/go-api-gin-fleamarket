@@ -108,7 +108,10 @@ func (r *ItemRepository) FindById(itemId uint) (*models.Item, error) {
 	return &item, nil
 }
 
-// Update implements IItemRepository.
-func (*ItemRepository) Update(updatedItem models.Item) (*models.Item, error) {
-	panic("unimplemented")
+func (r *ItemRepository) Update(updatedItem models.Item) (*models.Item, error) {
+	result := r.db.Save(&updatedItem)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &updatedItem, nil
 }
