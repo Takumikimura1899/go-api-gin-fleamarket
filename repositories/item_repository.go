@@ -87,9 +87,13 @@ func (*ItemRepository) Delete(itemId uint) error {
 	panic("unimplemented")
 }
 
-// FindAll implements IItemRepository.
-func (*ItemRepository) FindAll() (*[]models.Item, error) {
-	panic("unimplemented")
+func (r *ItemRepository) FindAll() (*[]models.Item, error) {
+	var items []models.Item
+	result := r.db.Find(&items)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &items, nil
 }
 
 // FindById implements IItemRepository.
