@@ -9,12 +9,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func main() {
-	infra.Initialize()
-	db := infra.SetupDB()
-
+func setUpRouter(db *gorm.DB) *gin.Engine {
 	itemRepository := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepository)
 	itemController := controller.NewItemController(itemService)
@@ -37,5 +35,14 @@ func main() {
 
 	authRouter.POST("/signup", authController.SignUp)
 	authRouter.POST("/login", authController.Login)
+
+	return r
+}
+
+func main() {
+	infra.Initialize()
+	db := infra.SetupDB()
+	r := setUpRouter(db)
+
 	r.Run()
 }
