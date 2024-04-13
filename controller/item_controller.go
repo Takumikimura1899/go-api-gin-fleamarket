@@ -2,6 +2,7 @@ package controller
 
 import (
 	"gin-fleamarket/dto"
+	"gin-fleamarket/models"
 	"gin-fleamarket/services"
 	"net/http"
 	"strconv"
@@ -54,13 +55,23 @@ func (c *ItemController) FindById(ctx *gin.Context) {
 }
 
 func (c *ItemController) Create(ctx *gin.Context) {
+	user, exists := ctx.Get("user")
+	if !exists {
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	// getMethodで取得したuserはany型になるので、型アサーションを使ってUser型に変換
+	userId := user.(*models.User).ID
+
 	var input dto.CreateItemInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	newItem, err := c.service.Create(input)
+	// 新たにauth認証を追加したため、userIdを引数に追加
+	newItem, err := c.service.Create(input, userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
